@@ -1,24 +1,28 @@
-const List = ({ content }) => {
+const Header = ({ header }) => {
+    return <h1>{header}</h1>;
+};
+
+const Part = ({ part }) => {
     return (
-        <div style={{ marginBottom: "1rem" }}>
-            {content.name} {content.exercises}
-        </div>
+        <p>
+            {part.name} {part.exercises}
+        </p>
     );
 };
 
-const Course = (props) => {
-    const { course } = props;
-    const total = course.parts.reduce((s, p) => {
-        return s + p.exercises;
-    }, 0);
+const Total = ({ parts }) => {
+    const cnt = parts.reduce((s, c) => s + c.exercises, 0);
+    return <p style={{ fontWeight: "bold" }}>total of {cnt} exercises!!!</p>;
+};
 
+const Course = ({ course }) => {
     return (
         <div>
-            <h1>{course.name}</h1>
+            <Header header={course.name} />
             {course.parts.map((c) => (
-                <List key={c.id} content={c} />
+                <Part key={c.id} part={c} />
             ))}
-            <p>total of {total} exercises</p>
+            <Total parts={course.parts} />
         </div>
     );
 };
