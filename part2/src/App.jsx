@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Note from "./components/Note";
 import noteService from "./services/persons";
+import notes from "./services/notes";
 
 const App = () => {
     const [persons, setPersons] = useState([]);
@@ -43,29 +44,63 @@ const App = () => {
 
     const addPerson = (event) => {
         event.preventDefault();
-        const newPerson = {
-            name: newName,
-            number: newNumber,
-            id: String(persons.length + 1),
-        };
 
-        if (names.includes(newName)) {
-            alert(`${newName} already exists in the Phonebook`);
-            setNewName("");
-            setNewNumber("");
+        const oldPerson = persons.find(
+            (person) => person.name.toLowerCase() === newName.toLowerCase()
+        );
+
+        if (oldPerson) {
+            // confirm msg
+            const confirmUpdate = window.confirm(
+                `${newName} is already added to the phonbook. Replace the old number with a new one?`
+            );
+
+            // if user said YES
+            if (confirmUpdate) {
+                const updatedPerson = {
+                    ...oldPerson,
+                    number: newNumber,
+                };
+
+                noteService
+                    .update(oldPerson.id, updatedPerson)
+                    .then((returnedPerson) => {
+                        setPersons(
+                            persons.map((person) =>
+                                person.id === oldPerson.id
+                                    ? returnedPerson
+                                    : person
+                            )
+                        );
+                        setNewName("");
+                        setNewNumber("");
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        alert(
+                            `${newName} has already been removed from the server...`
+                        );
+                        setPersons(
+                            persons.filter((p) => p.id !== oldPerson.id)
+                        );
+                    });
+            }
 
             return;
         }
 
-        // POST method
+        // if this name hasn't been added to the server yet ==> brand NEW name
+        const newPerson = {
+            name: newName,
+            number: newNumber,
+            id: String(persons.length + 1), // json-server handles ID automatically
+        };
+
         noteService.create(newPerson).then((response) => {
             setPersons(persons.concat(response));
             setNewName("");
+            setNewNumber("");
         });
-
-        setNames(names.concat(newName.toLowerCase()));
-        setNewNumber("");
-        setNewName("");
     };
 
     return (
