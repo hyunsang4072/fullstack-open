@@ -1,14 +1,18 @@
 import { useState, useEffect } from "react";
 import Note from "./components/Note";
+import Footer from "./components/Footer";
+import Notification from "./components/Notification";
 import noteService from "./services/persons";
-import notes from "./services/notes";
+// import notes from "./services/notes";
 
 const App = () => {
     const [persons, setPersons] = useState([]);
     const [newName, setNewName] = useState("");
     const [newNumber, setNewNumber] = useState("");
-    const [names, setNames] = useState([]);
+    // const [names, setNames] = useState([]);
     const [searchName, setSearchName] = useState("");
+    const [errorMessage, setErrorMessage] = useState(null);
+    const [messageType, setMessageType] = useState("");
 
     useEffect(() => {
         noteService.getAll().then((initialPersons) => {
@@ -35,7 +39,17 @@ const App = () => {
         noteService
             .deleteObject(id)
             .then((response) => {
-                console.log(response);
+                const deletedPerson = persons.find(
+                    (person) => person.id === id
+                );
+                setErrorMessage(
+                    `Person '${deletedPerson.name}' was successfully deleted from the server`
+                );
+                setMessageType("green");
+                setTimeout(() => {
+                    setErrorMessage(null);
+                }, 4000);
+                setMessageType(null);
             })
             .then(() => {
                 setPersons(persons.filter((p) => p.id !== id));
@@ -76,10 +90,14 @@ const App = () => {
                         setNewNumber("");
                     })
                     .catch((error) => {
-                        console.log(error);
-                        alert(
-                            `${newName} has already been removed from the server...`
+                        setErrorMessage(
+                            `Person '${oldPerson.name}' was already removed from server`
                         );
+                        setMessageType("red");
+                        setTimeout(() => {
+                            setErrorMessage(null);
+                        }, 4000);
+                        setMessageType(null);
                         setPersons(
                             persons.filter((p) => p.id !== oldPerson.id)
                         );
@@ -97,6 +115,14 @@ const App = () => {
         };
 
         noteService.create(newPerson).then((response) => {
+            setErrorMessage(
+                `Person '${newPerson.name}' was successfully added to the server`
+            );
+            setMessageType("green");
+            setTimeout(() => {
+                setErrorMessage(null);
+            }, 4000);
+            setMessageType(null);
             setPersons(persons.concat(response));
             setNewName("");
             setNewNumber("");
@@ -106,6 +132,7 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
+            <Notification message={errorMessage} type={messageType} />
             <div>
                 search:
                 <input value={searchName} onChange={handleSearchNameChange} />
@@ -140,6 +167,7 @@ const App = () => {
                         />
                     ))}
             </ul>
+            <Footer />
         </div>
     );
 };

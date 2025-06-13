@@ -1,6 +1,6 @@
 const Note = ({ note, handleDelete }) => {
     return (
-        <li>
+        <li className="note">
             {note.name} {note.number}
             <button onClick={handleDelete}>Delete</button>
         </li>
