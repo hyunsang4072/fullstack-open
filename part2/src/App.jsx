@@ -74,6 +74,7 @@ const App = () => {
                 const updatedPerson = {
                     ...oldPerson,
                     number: newNumber,
+                    id: oldPerson.id + 1,
                 };
 
                 noteService
