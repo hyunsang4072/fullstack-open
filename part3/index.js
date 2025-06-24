@@ -80,10 +80,23 @@
 
 // EX 3.1 - 3.6
 const express = require("express");
+var morgan = require("morgan");
 const app = express();
 
 //
 app.use(express.json());
+
+// ex 3.7
+morgan.token("type", function (req, res) {
+    return JSON.stringify(req.body);
+});
+// app.use(morgan(":type"));
+
+app.use(
+    morgan(
+        ":method :url :status :res[content-length] - :response-time ms :type"
+    )
+);
 
 let persons = [
     {
@@ -165,6 +178,13 @@ app.post("/api/persons", (req, res) => {
     - The name already exists in the phonebook */
     res.send(persons);
 });
+
+//
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
 
 const PORT = 3001;
 app.listen(PORT, () => {
