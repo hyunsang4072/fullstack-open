@@ -90,6 +90,9 @@ app.use(express.json());
 // Cross-origin resource sharing (CORS)
 app.use(cors());
 
+// serve a static file
+app.use(express.static("dist"));
+
 // ex 3.7
 morgan.token("type", function (req, res) {
     return JSON.stringify(req.body);
