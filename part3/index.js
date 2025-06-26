@@ -81,10 +81,14 @@
 // EX 3.1 - 3.6
 const express = require("express");
 var morgan = require("morgan");
+const cors = require("cors");
 const app = express();
 
 //
 app.use(express.json());
+
+// Cross-origin resource sharing (CORS)
+app.use(cors());
 
 // ex 3.7
 morgan.token("type", function (req, res) {
@@ -186,7 +190,10 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint);
 
-const PORT = 3001;
+// const PORT = 3001;
+
+// to host our Node server
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
