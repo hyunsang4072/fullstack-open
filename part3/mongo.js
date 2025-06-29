@@ -1,4 +1,3 @@
-// mongodb+srv://<db_username>:<db_password>@cluster0.umz6qu2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 const mongoose = require("mongoose");
 
 if (process.argv.length < 3) {
@@ -10,7 +9,7 @@ const password = process.argv[2];
 const name = process.argv[3];
 const phoneNumber = process.argv[4];
 
-const url = `mongodb+srv://fullstack:${password}@cluster0.umz6qu2.mongodb.net/phoneBook?retryWrites=true&w=majority&appName=Cluster0`;
+const url = "MONGODB_API_KEY";
 
 mongoose.set("strictQuery", false);
 

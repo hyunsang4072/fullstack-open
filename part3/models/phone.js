@@ -8,7 +8,7 @@ mongoose.set("strictQuery", false);
 // mongoDB
 // const password = process.argv[2];
 // const url = process.env.MONGODB_URI;
-const url = `mongodb+srv://fullstack:fullstack@cluster0.umz6qu2.mongodb.net/phoneBook?retryWrites=true&w=majority&appName=Cluster0`;
+const url = "MONGODB_API_KEY";
 
 mongoose
     .connect(url)
