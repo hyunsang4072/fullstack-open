@@ -76,12 +76,25 @@ app.get("/api/info", (req, res) => {
 });
 
 app.get("/api/persons/:id", (req, res) => {
-    const id = req.params.id;
-    const person = persons.find((person) => person.id === id);
-    if (!person) {
-        return res.status(400).send(`Person with ${id} not found...`);
-    }
-    res.send(person);
+    // const id = req.params.id;
+    // const person = persons.find((person) => person.id === id);
+    // if (!person) {
+    //     return res.status(400).send(`Person with ${id} not found...`);
+    // }
+    // res.send(person);
+    persons
+        .findById(req.params.id)
+        .then((person) => {
+            if (person) {
+                res.json(person);
+            } else {
+                res.status(404).end();
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(500).end();
+        });
 });
 
 app.delete("/api/persons/:id", (req, res) => {

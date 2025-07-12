@@ -8,7 +8,7 @@ mongoose.set("strictQuery", false);
 // mongoDB
 // const password = process.argv[2];
 // const url = process.env.MONGODB_URI;
-const url = "MONGODB_API_KEY";
+const url = process.env.MONGODB_URL;
 
 mongoose
     .connect(url)
