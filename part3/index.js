@@ -101,13 +101,9 @@ app.delete("/api/persons/:id", (req, res, next) => {
     // Phone.findById(request.params.id).then((number) => {
     //     response.json(number);
     // });
-    Phone.findById(request.params.id)
-        .then((person) => {
-            if (person) {
-                response.json(person);
-            } else {
-                response.status(404).end();
-            }
+    Phone.findByIdAndDelete(req.params.id)
+        .then((result) => {
+            res.status(204).end();
         })
         .catch((error) => next(error));
 });
@@ -139,12 +135,44 @@ app.post("/api/persons", (req, res) => {
         });
 });
 
+app.put("/api/persons/:id", (request, response, next) => {
+    const { name, phoneNumber } = request.body;
+
+    Phone.findById(request.params.id)
+        .then((person) => {
+            if (!person) {
+                return response.status(404).end();
+            }
+
+            person.name = name;
+            person.phoneNumber = phoneNumber;
+
+            return person.save().then((updatedPerson) => {
+                response.json(updatedPerson);
+            });
+        })
+        .catch((error) => next(error));
+});
+
 //
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: "unknown endpoint" });
 };
 
 app.use(unknownEndpoint);
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message);
+
+    if (error.name === "CastError") {
+        return response.status(400).send({ error: "malformatted id" });
+    }
+
+    next(error);
+};
+
+// this has to be the last loaded middleware, also all the routes should be registered before this!
+app.use(errorHandler);
 
 // const PORT = 3001;
 
