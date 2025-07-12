@@ -82,8 +82,7 @@ app.get("/api/persons/:id", (req, res) => {
     //     return res.status(400).send(`Person with ${id} not found...`);
     // }
     // res.send(person);
-    persons
-        .findById(req.params.id)
+    Phone.findById(req.params.id)
         .then((person) => {
             if (person) {
                 res.json(person);
@@ -93,15 +92,24 @@ app.get("/api/persons/:id", (req, res) => {
         })
         .catch((error) => {
             console.log(error);
-            res.status(500).end();
+            res.status(400).send({ error: "malformatted id" });
         });
 });
 
-app.delete("/api/persons/:id", (req, res) => {
-    const id = req.params.id;
-    Phone.findById(request.params.id).then((number) => {
-        response.json(number);
-    });
+app.delete("/api/persons/:id", (req, res, next) => {
+    // const id = req.params.id;
+    // Phone.findById(request.params.id).then((number) => {
+    //     response.json(number);
+    // });
+    Phone.findById(request.params.id)
+        .then((person) => {
+            if (person) {
+                response.json(person);
+            } else {
+                response.status(404).end();
+            }
+        })
+        .catch((error) => next(error));
 });
 
 // helper function to generate random id(=Number)
@@ -120,9 +128,15 @@ app.post("/api/persons", (req, res) => {
         phoneNumber: body.phoneNumber,
     });
 
-    newPhoneNumber.save().then((res) => {
-        console.log(res);
-    });
+    newPhoneNumber
+        .save()
+        .then((savedPhone) => {
+            res.json(savedPhone);
+        })
+        .catch((error) => {
+            console.error("Error saving phone number:", error);
+            res.status(500).send("Internal server error.");
+        });
 });
 
 //

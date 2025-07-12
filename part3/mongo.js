@@ -1,3 +1,6 @@
+// .env
+require("dotenv").config();
+
 const mongoose = require("mongoose");
 
 // if (process.argv.length < 3) {
